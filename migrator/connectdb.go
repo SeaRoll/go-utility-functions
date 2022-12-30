@@ -4,6 +4,10 @@ import (
 	"database/sql"
 	"log"
 	"os"
+
+	_ "github.com/go-sql-driver/mysql" // required for mysql
+	_ "github.com/jackc/pgx/v4/stdlib" // required for postgres
+	_ "github.com/mattn/go-sqlite3"    // required for sqlite
 )
 
 // connects to a postgres database

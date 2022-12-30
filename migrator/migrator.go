@@ -40,12 +40,12 @@ func getFileContent(fileName string) string {
 }
 
 func createMigrationTable(conn *sql.DB) {
-	_, err := conn.Exec("CREATE TABLE IF NOT EXISTS migrations (id text PRIMARY KEY, hash text)")
-	log.Println("MIGRATOR: Created migrations table")
+	_, err := conn.Exec("CREATE TABLE IF NOT EXISTS migrations (id text PRIMARY KEY, hash text NOT NULL);")
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(1)
 	}
+	log.Println("MIGRATOR: Created migrations table")
 }
 
 func generateMD5Hash(text string) string {
@@ -77,7 +77,7 @@ func executeMigrations(conn *sql.DB, files []string) {
 			log.Println("MIGRATOR: Migration already executed: " + file)
 			continue
 		}
-		if hash != hashFromDB {
+		if hashFromDB != "" && hash != hashFromDB {
 			log.Println("MIGRATOR: Migration hash is wrong for file: " + file)
 			os.Exit(1)
 		}
@@ -85,7 +85,7 @@ func executeMigrations(conn *sql.DB, files []string) {
 		_, err := tx.Exec(fileContent)
 		if err != nil {
 			defer tx.Rollback()
-			log.Fatal(err)
+			log.Fatal("MIGRATOR: Failed to execute sql file: ", err)
 			os.Exit(1)
 		}
 		_, err = tx.Exec("INSERT INTO migrations (id, hash) VALUES ($1, $2)", file, hash)
