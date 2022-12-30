@@ -18,6 +18,7 @@ func ConnectToPostgres(host string, port string, username string, password strin
 	return conn
 }
 
+// connects to a sqlite database
 func ConnectToSqlite(path string) *sql.DB {
 	conn, err := sql.Open("sqlite3", path)
 	if err != nil {
@@ -27,6 +28,7 @@ func ConnectToSqlite(path string) *sql.DB {
 	return conn
 }
 
+// connects to a mysql database
 func ConnectToMysql(host string, port string, username string, password string, dbname string) *sql.DB {
 	conn, err := sql.Open("mysql", username+":"+password+"@tcp("+host+":"+port+")/"+dbname)
 	if err != nil {
